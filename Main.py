@@ -10,7 +10,7 @@ moves = Moves(board)
 ui = UI(moves)
 # print board in console
 board.print_board()
-while board.check_win():
+while board.check_win()[0]:
     # do action
     ui.ask_for_action()
     # print board

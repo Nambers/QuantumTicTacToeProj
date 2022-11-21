@@ -36,22 +36,22 @@ class Board:
                 or self.result[0] == self.result[4] == self.result[8] != -1 \
                 or self.result[0] == self.result[3] == self.result[6] != -1:
             print(self.result[0], "wins")
-            return False
+            return [False, self.result[0]]
         elif self.result[3] == self.result[4] == self.result[5] != -1 \
                 or self.result[1] == self.result[4] == self.result[7] != -1\
                 or self.result[2] == self.result[4] == self.result[6] != -1:
             print(self.result[4], "wins")
-            return False
+            return [False, self.result[4]]
         elif self.result[6] == self.result[7] == self.result[8] != -1 \
                 or self.result[2] == self.result[5] == self.result[8] != -1:
             print(self.result[8], "wins!")
-            return False
+            return [False, self.result[8]]
         elif -1 not in self.result:  # draw
             print("draw")
-            return False
+            return [False, 2]
         else:
             # don't have result yet
-            return True
+            return [True, -1]
 
     def refresh_result(self, qid):
         """

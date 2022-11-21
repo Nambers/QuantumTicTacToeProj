@@ -37,12 +37,14 @@ def data():
     transform = {
         0: "X",
         1: "O",
-        -1: "?"
+        -1: "?",
+        2: "draw"
     }
 
     response = jsonify(
         qubits=[transform[i] for i in board.result],
-        base64=board.get_image_base64().decode()
+        base64=board.get_image_base64().decode(),
+        win=transform[board.check_win()[1]]
     )
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
@@ -50,5 +52,4 @@ def data():
 
 # Running app
 if __name__ == '__main__':
-    print(board.get_image_base64())
     app.run(debug=True)

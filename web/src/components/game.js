@@ -18,6 +18,13 @@ async function pushOption(selectQubits, option, qubits, setQubits, setImage) {
             })
             setQubits(temp)
             setImage("data:image/png;base64," + res.base64)
+            if (res.win !== "?") {
+                if (res.win !== "draw") {
+                    console.log(res.win + " win!")
+                } else {
+                    console.log("draw! no result.")
+                }
+            }
         })
     } catch (e) {
         console.error(e)
@@ -81,13 +88,13 @@ function Game() {
     }
     return (
         <EuiFlexGroup direction="column">
-            <EuiFlexItem>
+            <EuiFlexItem style={{ "heigh": "100em" }}>
                 <EuiFlexGroup>
                     <EuiFlexItem grow={false}>
                         <Board qubits={qubits} onClick={onClickEach} player={player} />
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
-                        <img src={image} alt="" style={{"height":"30em"}}/>
+                        <img src={image} alt="" style={{ "height": "30em" }} />
                     </EuiFlexItem>
                 </EuiFlexGroup>
             </EuiFlexItem>
