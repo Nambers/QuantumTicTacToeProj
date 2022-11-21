@@ -1,9 +1,9 @@
 {
-  "name": "gatsby-starter-default",
+  "name": "quantum-tic-tac-toe",
   "private": true,
-  "description": "A simple starter to get up and developing quickly with Gatsby",
+  "description": "A simple quantum tic tac toe game",
   "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Eritque arcus <eritque-arcus@eritque-arcus.tech> and 😇",
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^70.3.0",
