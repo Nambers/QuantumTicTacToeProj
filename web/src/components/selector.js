@@ -34,14 +34,17 @@ function Selector(props) {
 
   const onChange = (selectedOptions) => {
     // We should only get back either 0 or 1 options.
-    if(selectedOptions.length == 0){
+    if (selectedOptions.length === 0) {
       props.setOption(-1)
       props.setQubitNum("unknown :(")
-    }else{
+      props.onChange(-1)
+    } else {
       props.setOption(selectedOptions[0].id)
       props.setQubitNum(selectedOptions[0].qubitNum)
+      props.onChange(selectedOptions[0].id)
     }
     setSelected(selectedOptions);
+
   };
 
   return (

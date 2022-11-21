@@ -1,19 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 function Square(props) {
-    const [style, setStyle] = useState({ backgroundColor: "white" })
-    const [clicked, setClicked] = useState(true)
-    const onClick = (clicked, setClicked, setStyle) => {
-        setClicked(clicked !== true)
-        if (clicked) {
-            setStyle({ backgroundColor: "coral" })
-        } else {
-            setStyle({ backgroundColor: "white" })
-        }
-        props.clickFunc(props.index, clicked, setClicked)
-    }
     return (
-        <button className="square" onClick={() => onClick(clicked, setClicked, setStyle)} style={style}>
-            {props.value}
+        <button className="square" onClick={() => props.clickFunc(props.index)} style={{ backgroundColor: props.value.bgColor }}>
+            {props.value.value}
         </button>
     )
 }
