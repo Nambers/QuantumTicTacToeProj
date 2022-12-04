@@ -1,5 +1,10 @@
 reflection_map = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
-
+transform = {
+        0: "X",
+        1: "O",
+        -1: "?",
+        2: "draw"
+    }
 
 def ask_for_qid(msg=""):
     """

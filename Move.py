@@ -50,3 +50,6 @@ class Moves:
         :return: None
         """
         self.board.qc.swap(self.board.quantum_bits[qid1], self.board.quantum_bits[qid2])
+        tmp = self.board.result[qid1]
+        self.board.result[qid1] = self.board.result[qid2]
+        self.board.result[qid2] = tmp

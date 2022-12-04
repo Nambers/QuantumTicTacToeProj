@@ -2,7 +2,7 @@ from flask import Flask, request, make_response, jsonify
 
 from Board import Board
 from Move import Moves
-from Utils import UI
+from Utils import UI, transform
 
 # Initializing flask app
 app = Flask(__name__)
@@ -34,18 +34,32 @@ def data():
         moves.c_not(selectQubits[0], selectQubits[1])
     elif option == 4:
         moves.swap(selectQubits[0], selectQubits[1])
-    transform = {
-        0: "X",
-        1: "O",
-        -1: "?",
-        2: "draw"
-    }
+    elif option == 5:
+        # fetch
+        pass
 
     response = jsonify(
         qubits=[transform[i] for i in board.result],
         base64=board.get_image_base64().decode(),
         win=transform[board.check_win()[1]]
     )
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
+@app.route('/reset', methods=['GET'])
+def reset():
+    global board
+    board.reset()
+    resp = make_response("")
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+@app.route('/image', methods=['GET'])
+def image():
+    global board
+    response = jsonify(base64=board.get_image_base64().decode())
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 

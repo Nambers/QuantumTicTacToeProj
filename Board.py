@@ -26,6 +26,8 @@ class Board:
         self.quantum_bits = QuantumRegister(9, name="q")
         self.classic_bits = ClassicalRegister(1, name="c")
         self.qc = QuantumCircuit(self.quantum_bits, self.classic_bits)
+        for a in self.quantum_bits:
+            self.qc.h(a)
 
     def __init__(self):
         for a in self.quantum_bits:

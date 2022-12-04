@@ -8,16 +8,17 @@ import {
 } from '@elastic/eui';
 import React, { useState } from 'react'
 
-async function pushOption(selectQubits, option, qubits, setQubits, setImage) {
+async function pushOption(selectQubits, option, qubits, setQubits) {
     let response = await fetch("http://localhost:5000/" + "data?selectQubits=" + JSON.stringify(selectQubits) + "&option=" + option);
     try {
         await response.json().then((res) => {
             var temp = qubits.slice()
             temp.forEach((value, index, arr) => {
                 arr[index].value = res.qubits[index]
+                arr[index].clicked = false
+                arr[index].bgColor = "white"
             })
             setQubits(temp)
-            setImage("data:image/png;base64," + res.base64)
             if (res.win !== "?") {
                 if (res.win !== "draw") {
                     console.log(res.win + " win!")
@@ -30,6 +31,31 @@ async function pushOption(selectQubits, option, qubits, setQubits, setImage) {
         console.error(e)
     }
 }
+async function getImage(setImage) {
+    let response = await fetch("http://localhost:5000/image");
+    try {
+        await response.json().then((res) => {
+            setImage("data:image/png;base64," + res.base64)
+        })
+    } catch (e) {
+        console.error(e)
+    }
+}
+async function reset(setQubits, setPlayer) {
+    let response = await fetch("http://localhost:5000/reset");
+    try {
+        await response.then(() => {
+            var temp = Array(9).fill(Array(1).fill(null))
+            temp.forEach((val, index, arr) => {
+                arr[index] = { clicked: false, value: "?", bgColor: "white", id: index }
+            })
+            setQubits(temp)
+        })
+    } catch (e) {
+        console.error(e)
+    }
+    setPlayer("X")
+}
 function Game() {
     const [option, setOption] = useState(0)
     const [qubitNum, setQubitNum] = useState("1")
@@ -38,7 +64,12 @@ function Game() {
         arr[index] = { clicked: false, value: "?", bgColor: "white", id: index }
     })
     const [qubits, setQubits] = useState(temp)
-    const [image, setImage] = useState("data:image/png;base64,")
+    const [image, setImage] = useState("")
+    if (image == "") {
+        // [1] is placeHolder
+        pushOption([1], 5, qubits, setQubits)
+        getImage(setImage)
+    }
     const [player, setPlayer] = useState("X")
     const [selectedCount, setSelectedCount] = useState(0)
     const onOperationChange = (op) => {
@@ -111,14 +142,24 @@ function Game() {
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
                         <EuiButton onClick={() => {
-                            pushOption(qubits.filter((value, index, arr) => value.clicked).map((value, index, arr) => value.id), option, qubits, setQubits, setImage)
+                            pushOption(qubits.filter((value, index, arr) => value.clicked).map((value, index, arr) => value.id), option, qubits, setQubits)
+                            setSelectedCount(0)
                             if (player === "X") {
                                 setPlayer("O")
                             } else {
                                 setPlayer("X")
                             }
+                            getImage(setImage)
                         }}>
                             Done
+                        </EuiButton>
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                        <EuiButton onClick={() => {
+                            reset(setQubits, setPlayer)
+                            getImage(setImage)
+                        }}>
+                            Reset
                         </EuiButton>
                     </EuiFlexItem>
                 </EuiFlexGroup>
