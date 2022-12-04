@@ -27,7 +27,8 @@ class UI:
                         "cnot": lambda: moves.c_not(ask_for_qid("to the control qubit of cnot gate"),
                                                     ask_for_qid("to the target qubit of cnot gate")),
                         "swap": lambda: moves.swap(ask_for_qid("to the first qubit of swap gate"),
-                                                   ask_for_qid("to the second qubit of swap gate"))}
+                                                   ask_for_qid("to the second qubit of swap gate")),
+                        "reset": lambda: moves.reset()}
 
     def ask_for_action(self):
         """
@@ -35,7 +36,7 @@ class UI:
         :return: None
         """
         action = input(
-            "Enter the action you want to take(m - measure, h - Hadamard gate, zh - z + h gate, cnot - Control Not gate, swap - swap gate): ")
+            "Enter the action you want to take(m - measure, h - Hadamard gate, zh - z + h gate, cnot - Control Not gate, swap - swap gate, reset - reset game): ")
         while action not in self.actions.keys():
             action = input("input invalid, plz re-enter:")
         self.actions[action]()

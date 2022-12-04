@@ -53,3 +53,6 @@ class Moves:
         tmp = self.board.result[qid1]
         self.board.result[qid1] = self.board.result[qid2]
         self.board.result[qid2] = tmp
+
+    def reset(self):
+        self.board.reset()
