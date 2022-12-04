@@ -6,14 +6,14 @@ Using technics:
 - Elastic UI
 # how to start
 ## dependencies
-install flask by `pip install flask`
-install qiskit by `pip install qiskit`
-install React, nodejs, yarn, elastic
+install flask by `pip install flask`  
+install qiskit by `pip install qiskit`  
+install React, nodejs, yarn, elastic  
 ```
 yarn install
 yarn add @elastic/eui
 ```
-install matplotlib
+install matplotlib  
 ## For web mode
 1. 
 ```
