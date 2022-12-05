@@ -7,7 +7,7 @@ function Board(props) {
 
   return (
     <div>
-      <div className="status">{'Next player: ' + props.player}</div>
+      <div className="status">{props.player}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}

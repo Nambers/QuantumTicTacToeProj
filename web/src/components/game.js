@@ -8,7 +8,7 @@ import {
 } from '@elastic/eui';
 import React, { useState } from 'react'
 
-async function pushOption(selectQubits, option, qubits, setQubits) {
+async function pushOption(selectQubits, option, qubits, setQubits, player, setPlayer, setIsDisableDoneButt) {
     let response = await fetch("http://localhost:5000/" + "data?selectQubits=" + JSON.stringify(selectQubits) + "&option=" + option);
     try {
         await response.json().then((res) => {
@@ -21,9 +21,18 @@ async function pushOption(selectQubits, option, qubits, setQubits) {
             setQubits(temp)
             if (res.win !== "?") {
                 if (res.win !== "draw") {
+                    setPlayer(res.win + " win!")
                     console.log(res.win + " win!")
                 } else {
+                    setPlayer("draw! no result.")
                     console.log("draw! no result.")
+                }
+                setIsDisableDoneButt(true)
+            } else {
+                if (player === "Next player: X") {
+                    setPlayer("Next player: O")
+                } else {
+                    setPlayer("Next player: X")
                 }
             }
         })
@@ -41,20 +50,15 @@ async function getImage(setImage) {
         console.error(e)
     }
 }
-async function reset(setQubits, setPlayer) {
-    let response = await fetch("http://localhost:5000/reset");
-    try {
-        await response.then(() => {
-            var temp = Array(9).fill(Array(1).fill(null))
-            temp.forEach((val, index, arr) => {
-                arr[index] = { clicked: false, value: "?", bgColor: "white", id: index }
-            })
-            setQubits(temp)
-        })
-    } catch (e) {
-        console.error(e)
-    }
-    setPlayer("X")
+async function reset(setQubits, setPlayer, setIsDisableDoneButt) {
+    fetch("http://localhost:5000/reset");
+    var temp = Array(9).fill(Array(1).fill(null))
+    temp.forEach((val, index, arr) => {
+        arr[index] = { clicked: false, value: "?", bgColor: "white", id: index }
+    })
+    setQubits(temp)
+    setIsDisableDoneButt(false)
+    setPlayer("Next player: X")
 }
 function Game() {
     const [option, setOption] = useState(0)
@@ -65,12 +69,13 @@ function Game() {
     })
     const [qubits, setQubits] = useState(temp)
     const [image, setImage] = useState("")
+    const [isDisableDoneButt, setIsDisableDoneButt] = useState(false)
     if (image == "") {
         // [1] is placeHolder
         pushOption([1], 5, qubits, setQubits)
         getImage(setImage)
     }
-    const [player, setPlayer] = useState("X")
+    const [player, setPlayer] = useState("Next player: X")
     const [selectedCount, setSelectedCount] = useState(0)
     const onOperationChange = (op) => {
         if (op === -1) {
@@ -141,14 +146,9 @@ function Game() {
                         />
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
-                        <EuiButton onClick={() => {
-                            pushOption(qubits.filter((value, index, arr) => value.clicked).map((value, index, arr) => value.id), option, qubits, setQubits)
+                        <EuiButton isDisabled={isDisableDoneButt} onClick={() => {
+                            pushOption(qubits.filter((value, index, arr) => value.clicked).map((value, index, arr) => value.id), option, qubits, setQubits, player, setPlayer, setIsDisableDoneButt)
                             setSelectedCount(0)
-                            if (player === "X") {
-                                setPlayer("O")
-                            } else {
-                                setPlayer("X")
-                            }
                             getImage(setImage)
                         }}>
                             Done
@@ -156,7 +156,7 @@ function Game() {
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
                         <EuiButton onClick={() => {
-                            reset(setQubits, setPlayer)
+                            reset(setQubits, setPlayer, setIsDisableDoneButt)
                             getImage(setImage)
                         }}>
                             Reset
