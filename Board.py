@@ -37,13 +37,13 @@ class Board:
             self.qc.h(a)
 
     def check_win(self):
-        if self.result[0] == self.result[1] == self.result[2] != -1     \
+        if self.result[0] == self.result[1] == self.result[2] != -1 \
                 or self.result[0] == self.result[4] == self.result[8] != -1 \
                 or self.result[0] == self.result[3] == self.result[6] != -1:
             print(self.result[0], "wins")
             return [False, self.result[0]]
         elif self.result[3] == self.result[4] == self.result[5] != -1 \
-                or self.result[1] == self.result[4] == self.result[7] != -1\
+                or self.result[1] == self.result[4] == self.result[7] != -1 \
                 or self.result[2] == self.result[4] == self.result[6] != -1:
             print(self.result[4], "wins")
             return [False, self.result[4]]
@@ -57,7 +57,6 @@ class Board:
         else:
             # don't have result yet
             return [True, -1]
-
 
     def refresh_result(self, qid):
         """
