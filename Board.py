@@ -1,13 +1,16 @@
 # Do the necessary imports
 import base64
+import io
 
+import matplotlib
+import matplotlib.pyplot as plt
 from qiskit import Aer
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute
+from qiskit.quantum_info import Statevector
+
 from Utils import reflection_map
-import os
-import io
-import matplotlib
-matplotlib.use('Agg')
+
+matplotlib.use('agg')
 
 
 class Board:
@@ -55,6 +58,7 @@ class Board:
             # don't have result yet
             return [True, -1]
 
+
     def refresh_result(self, qid):
         """
         Grab the result from classic bit and refresh the result in board
@@ -87,8 +91,10 @@ class Board:
         :return: None
         """
         buf = io.BytesIO()
-        self.qc.draw(output=output).savefig(buf, format='jpg')
+        fig = self.qc.draw(output=output)
+        fig.savefig(buf, format='jpg')
         buf.seek(0)
+        plt.close(fig)
         return base64.b64encode(buf.read())
 
     def print_board(self):
@@ -106,3 +112,20 @@ class Board:
                     temp += "|" + str(self.result[k]) + "|"
             print(temp)
             print("---------")
+
+    def return_probiblity(self, qid):
+        backend = Aer.get_backend('statevector_simulator')
+
+        outputstate = backend.run(self.qc, shots=1).result().get_statevector()
+
+        probs = Statevector(outputstate).probabilities([8])
+        return probs[0]
+
+
+"""
+    def return_probiblity(self):
+        backend = Aer.get_backend('unitary_simulator')
+        job = execute(self.qc,backend,shots=8192)
+        result = job.result()
+        print(result.get_unitary(self.qc,3))
+"""

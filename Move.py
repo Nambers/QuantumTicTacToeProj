@@ -1,3 +1,5 @@
+import random
+
 import Utils
 
 
@@ -56,3 +58,22 @@ class Moves:
 
     def reset(self):
         self.board.reset()
+
+    def random_quantum(self):
+        rid = random.randint(0, 8)
+        while self.board.result[rid] == -1:
+            rid = random.randint(0, 8)
+        return rid
+
+    def random_second_quantum(self, controlled: int):
+        rid = random.randint(0, 8)
+        while self.board.result[rid] == -1 or rid == controlled:
+            rid = random.randint(0, 8)
+        return rid
+
+    def quantum_left(self):
+        count = 0
+        for i in range(0, 8):
+            if self.board.result[i] == -1:
+                count = count + 1
+        return count

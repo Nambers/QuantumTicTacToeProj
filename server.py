@@ -18,6 +18,21 @@ moves = Moves(board)
 ui = UI(moves)
 
 
+@app.route("/AIMove", methods=["GET"])
+def ai_move():
+    option = int(request.args.get('option'))
+    if option == 1:
+        ui.random_move()
+    else:
+        ui.smart_move()
+    response = jsonify(
+        qubits=[transform[i] for i in board.result],
+        win=transform[board.check_win()[1]]
+    )
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 @app.route('/data', methods=['GET'])
 def data():
     global moves
@@ -40,7 +55,6 @@ def data():
 
     response = jsonify(
         qubits=[transform[i] for i in board.result],
-        base64=board.get_image_base64().decode(),
         win=transform[board.check_win()[1]]
     )
     response.headers.add('Access-Control-Allow-Origin', '*')

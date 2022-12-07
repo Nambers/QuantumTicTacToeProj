@@ -1,5 +1,6 @@
 import React from 'react';
-import { Square } from './square.js'
+import {Square} from './square.js'
+
 function Board(props) {
   const renderSquare = (i) => {
     return <Square index={i} clickFunc={props.onClick} value={props.qubits[i]} />;

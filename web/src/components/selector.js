@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { EuiComboBox } from '@elastic/eui';
+import React, {useState} from 'react';
+import {EuiComboBox} from '@elastic/eui';
 
 function Selector(props) {
   const options = [

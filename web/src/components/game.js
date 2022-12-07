@@ -1,45 +1,13 @@
-import { Board } from "./board";
-import { Selector } from "./selector";
-import {
-    EuiFlexGroup,
-    EuiFlexItem,
-    EuiIconTip,
-    EuiButton,
-} from '@elastic/eui';
-import React, { useState } from 'react'
+import {Board} from "./board";
+import {Selector} from "./selector";
+import {EuiButton, EuiFlexGroup, EuiFlexItem, EuiIconTip, EuiText,} from '@elastic/eui';
+import React, {useState} from 'react'
+import {GameModeSel} from "./gameModeSel";
 
-async function pushOption(selectQubits, option, qubits, setQubits, player, setPlayer, setIsDisableDoneButt) {
-    let response = await fetch("http://localhost:5000/" + "data?selectQubits=" + JSON.stringify(selectQubits) + "&option=" + option);
-    try {
-        await response.json().then((res) => {
-            var temp = qubits.slice()
-            temp.forEach((value, index, arr) => {
-                arr[index].value = res.qubits[index]
-                arr[index].clicked = false
-                arr[index].bgColor = "white"
-            })
-            setQubits(temp)
-            if (res.win !== "?") {
-                if (res.win !== "draw") {
-                    setPlayer(res.win + " win!")
-                    console.log(res.win + " win!")
-                } else {
-                    setPlayer("draw! no result.")
-                    console.log("draw! no result.")
-                }
-                setIsDisableDoneButt(true)
-            } else {
-                if (player === "Next player: X") {
-                    setPlayer("Next player: O")
-                } else {
-                    setPlayer("Next player: X")
-                }
-            }
-        })
-    } catch (e) {
-        console.error(e)
-    }
+function pushOption(selectQubits, option) {
+    return fetch("http://localhost:5000/" + "data?selectQubits=" + JSON.stringify(selectQubits) + "&option=" + option)
 }
+
 async function getImage(setImage) {
     let response = await fetch("http://localhost:5000/image");
     try {
@@ -50,22 +18,57 @@ async function getImage(setImage) {
         console.error(e)
     }
 }
-async function reset(setQubits, setPlayer, setIsDisableDoneButt) {
+
+function reset(setQubits, setPlayer, setIsDisableDoneButt) {
     fetch("http://localhost:5000/reset");
     var temp = Array(9).fill(Array(1).fill(null))
     temp.forEach((val, index, arr) => {
-        arr[index] = { clicked: false, value: "?", bgColor: "white", id: index }
+        arr[index] = {clicked: false, value: "?", bgColor: "white", id: index}
     })
     setQubits(temp)
     setIsDisableDoneButt(false)
     setPlayer("Next player: X")
 }
+
+function AIMove(gameMode) {
+    return fetch("http://localhost:5000/AIMove?option=" + JSON.stringify(gameMode))
+}
+
+function parseJsonData(resp, qubits, setQubits, player, setPlayer, setIsDisableDoneButt) {
+    resp.then(res => res.json()).then(res => {
+        var temp = qubits.slice()
+        temp.forEach((value, index, arr) => {
+            arr[index].value = res.qubits[index]
+            arr[index].clicked = false
+            arr[index].bgColor = "white"
+        })
+        setQubits(temp)
+        if (res.win !== "?") {
+            if (res.win !== "draw") {
+                setPlayer(res.win + " win!")
+                console.log(res.win + " win!")
+            } else {
+                setPlayer("draw! no result.")
+                console.log("draw! no result.")
+            }
+            setIsDisableDoneButt(true)
+        } else {
+            if (player === "Next player: X") {
+                setPlayer("Next player: O")
+            } else {
+                setPlayer("Next player: X")
+            }
+        }
+    })
+}
+
 function Game() {
     const [option, setOption] = useState(0)
     const [qubitNum, setQubitNum] = useState("1")
+    const [gameMode, setGameMode] = useState(0)
     var temp = Array(9).fill(Array(1).fill(null))
     temp.forEach((val, index, arr) => {
-        arr[index] = { clicked: false, value: "?", bgColor: "white", id: index }
+        arr[index] = {clicked: false, value: "?", bgColor: "white", id: index}
     })
     const [qubits, setQubits] = useState(temp)
     const [image, setImage] = useState("")
@@ -147,9 +150,14 @@ function Game() {
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
                         <EuiButton isDisabled={isDisableDoneButt} onClick={() => {
-                            pushOption(qubits.filter((value, index, arr) => value.clicked).map((value, index, arr) => value.id), option, qubits, setQubits, player, setPlayer, setIsDisableDoneButt)
+                            parseJsonData(pushOption(qubits.filter((value, index, arr) => value.clicked).map((value, index, arr) => value.id), option),
+                                qubits, setQubits, player, setPlayer, setIsDisableDoneButt)
                             setSelectedCount(0)
                             getImage(setImage)
+                            if (gameMode > 0) {
+                                parseJsonData(AIMove(gameMode), qubits, setQubits, player, setPlayer, setIsDisableDoneButt)
+                                getImage(setImage)
+                            }
                         }}>
                             Done
                         </EuiButton>
@@ -163,6 +171,10 @@ function Game() {
                         </EuiButton>
                     </EuiFlexItem>
                 </EuiFlexGroup>
+            </EuiFlexItem>
+            <EuiFlexItem>
+                <EuiText>Select game mode:</EuiText>
+                <GameModeSel setOption={setGameMode}/>
             </EuiFlexItem>
         </EuiFlexGroup>
     );

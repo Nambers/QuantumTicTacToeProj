@@ -1,6 +1,6 @@
 import React from 'react'
 import './index.css'
-import { Game } from '../components/game.js'
+import {Game} from '../components/game.js'
 import '@elastic/eui/dist/eui_theme_light.css'
 import {EuiProvider} from '@elastic/eui';
 
