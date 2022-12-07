@@ -82,8 +82,8 @@ class UI:
         maxProb = 0
         qid = 0
         for i in range(0, 8):
-            if self.moves.board.return_probiblity(i) > maxProb and self.moves.board.result[i] == -1:
-                maxProb = self.moves.board.return_probiblity(i)
+            if self.moves.board.return_probabilities(i) > maxProb and self.moves.board.result[i] == -1:
+                maxProb = self.moves.board.return_probabilities(i)
                 qid = i
         print(maxProb)
         if maxProb > 0.6:

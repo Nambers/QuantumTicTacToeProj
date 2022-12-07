@@ -34,7 +34,7 @@ function AIMove(gameMode) {
     return fetch("http://localhost:5000/AIMove?option=" + JSON.stringify(gameMode))
 }
 
-function parseJsonData(resp, qubits, setQubits, player, setPlayer, setIsDisableDoneButt) {
+function parseJsonData(resp, qubits, setQubits, setPlayer, setIsDisableDoneButt) {
     resp.then(res => res.json()).then(res => {
         var temp = qubits.slice()
         temp.forEach((value, index, arr) => {
@@ -52,12 +52,6 @@ function parseJsonData(resp, qubits, setQubits, player, setPlayer, setIsDisableD
                 console.log("draw! no result.")
             }
             setIsDisableDoneButt(true)
-        } else {
-            if (player === "Next player: X") {
-                setPlayer("Next player: O")
-            } else {
-                setPlayer("Next player: X")
-            }
         }
     })
 }
@@ -73,12 +67,12 @@ function Game() {
     const [qubits, setQubits] = useState(temp)
     const [image, setImage] = useState("")
     const [isDisableDoneButt, setIsDisableDoneButt] = useState(false)
+    const [player, setPlayer] = useState("Next player: X")
     if (image == "") {
         // [1] is placeHolder
-        pushOption([1], 5, qubits, setQubits)
+        parseJsonData(pushOption([1], 5), qubits, setQubits, setPlayer, setIsDisableDoneButt)
         getImage(setImage)
     }
-    const [player, setPlayer] = useState("Next player: X")
     const [selectedCount, setSelectedCount] = useState(0)
     const onOperationChange = (op) => {
         if (op === -1) {
@@ -91,15 +85,20 @@ function Game() {
             setQubits(temp)
         }
     }
+    const updatePlayer = (player, setPlayer) => {
+        if (player === "Next player: X") {
+            setPlayer("Next player: O")
+        } else {
+            setPlayer("Next player: X")
+        }
+    }
     const onClickEach = (index) => {
         if (!qubits[index].clicked) {
             if (option === -1) {
                 console.log("You should choose a operation first")
-            }
-            else if (selectedCount > qubitNum - 1) {
+            } else if (selectedCount > qubitNum - 1) {
                 console.log("You cannot choose one more qubits for this operation")
-            }
-            else if (option === 0 || option === 1 || option === 2) {
+            } else if (option === 0 || option === 1 || option === 2) {
                 if (qubits[index].value !== "?") {
                     console.log("You cannot choose a already determined qubit for this operation")
                 } else {
@@ -151,12 +150,14 @@ function Game() {
                     <EuiFlexItem grow={false}>
                         <EuiButton isDisabled={isDisableDoneButt} onClick={() => {
                             parseJsonData(pushOption(qubits.filter((value, index, arr) => value.clicked).map((value, index, arr) => value.id), option),
-                                qubits, setQubits, player, setPlayer, setIsDisableDoneButt)
+                                qubits, setQubits, setPlayer, setIsDisableDoneButt)
                             setSelectedCount(0)
                             getImage(setImage)
-                            if (gameMode > 0) {
-                                parseJsonData(AIMove(gameMode), qubits, setQubits, player, setPlayer, setIsDisableDoneButt)
+                            if (gameMode !== 0) {
+                                parseJsonData(AIMove(gameMode), qubits, setQubits, setPlayer, setIsDisableDoneButt)
                                 getImage(setImage)
+                            } else {
+                                updatePlayer(player, setPlayer)
                             }
                         }}>
                             Done

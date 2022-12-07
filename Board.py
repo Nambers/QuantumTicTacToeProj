@@ -113,19 +113,7 @@ class Board:
             print(temp)
             print("---------")
 
-    def return_probiblity(self, qid):
+    def return_probabilities(self, qid):
         backend = Aer.get_backend('statevector_simulator')
-
-        outputstate = backend.run(self.qc, shots=1).result().get_statevector()
-
-        probs = Statevector(outputstate).probabilities([8])
-        return probs[0]
-
-
-"""
-    def return_probiblity(self):
-        backend = Aer.get_backend('unitary_simulator')
-        job = execute(self.qc,backend,shots=8192)
-        result = job.result()
-        print(result.get_unitary(self.qc,3))
-"""
+        ouput_state = backend.run(self.qc, shots=50).result().get_statevector()
+        return Statevector(ouput_state).probabilities([qid])[0]
